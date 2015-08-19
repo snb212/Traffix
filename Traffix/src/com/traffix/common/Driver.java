@@ -4,8 +4,9 @@ import com.traffix.interfaces.CycleListener;
 
 public class Driver implements CycleListener{
 	
-		static double desiredSpeed;
-		static boolean canMakeDecision;
+		private static double desiredSpeed;
+
+		private static boolean canMakeDecision;
 
 		public Driver(double desiredSpeed){
 			this.desiredSpeed = desiredSpeed;
@@ -27,4 +28,11 @@ public class Driver implements CycleListener{
 			return "";
 		}
 		
+		public static double getDesiredSpeed() {
+			return desiredSpeed;
+		}
+
+		public static void setDesiredSpeed(double desiredSpeed) {
+			Driver.desiredSpeed = desiredSpeed;
+		}
 }
