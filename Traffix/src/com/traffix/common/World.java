@@ -8,10 +8,9 @@ import com.traffix.interfaces.CycleListener;
 public class World {
 	
 	private List<CycleListener> listeners = new ArrayList<CycleListener>();
-	private List<Vehicle> vehicles = new ArrayList<Vehicle>();
+	private List<Driver> drivers = new ArrayList<Driver>();
 	
-	int currentVehicleId = 1;
-	
+	int currentDriverId = 1;
 	double currentCycle = 0;
 	
 	public World() {
@@ -35,20 +34,21 @@ public class World {
 		
 	}
 	
-	public boolean addVehicle(Vehicle vehicle){
+	public boolean addDriver(Driver driver){
 		
-		vehicle.setId(currentVehicleId);
-		currentVehicleId++;
+		driver.setId(currentDriverId);
+		currentDriverId++;
 		
-		this.addListener(vehicle);
+		this.addListener(driver);
+		this.addListener(driver.getVehicle());
 		
-		vehicles.add(vehicle);
+		drivers.add(driver);
 		
-		return vehicles.contains(vehicle);
+		return drivers.contains(driver);
 	}
 	
-	public List getVehicles(){
-		return vehicles;
+	public List getDrivers(){
+		return drivers;
 	}
 	
 }

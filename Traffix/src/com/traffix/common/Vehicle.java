@@ -8,9 +8,6 @@ import java.text.DecimalFormat;
 public class Vehicle implements CycleListener{
 	static final double ACCELERATION_OF_GRAVITY = 9.81; 	//in m/s
 	
-	//vehicle attributes
-	int id;
-	
 	//state variables
 	private String state;
 	private String modifier;
@@ -25,41 +22,50 @@ public class Vehicle implements CycleListener{
 	private double acceleration; //in m/s
 	
 	//example coeffFrict is 7.2  (http://www.engineeringtoolbox.com/friction-coefficients-d_778.html)
-	public Vehicle(double acceleration, double deceleration, double drag, double speed, double coeffFrict) {
+	public Vehicle(double drag, double speed, double coeffFrict) {
 		this.drag = drag;
-		this.maxDeceleration = deceleration;
 		this.speed = speed;
 		this.coeffFrict = coeffFrict;
 		
+		//acceleration of a new car starts at 0. 
+		this.acceleration = 0;
+		
 		//a = ug
 		this.maxAcceleration = coeffFrict * ACCELERATION_OF_GRAVITY;
+		System.out.println("vehicle max acceleration " + this.maxAcceleration);
 
 		this.state = "null";
+		updateMaxDeceleration();
 	}
 	
 	@Override
 	public void nextCycle(){
+		System.out.println("--Environmental Effects--");
 		environmentalEffects();
 	}
 	
 	public void environmentalEffects(){
-		speed =  (speed - drag);
+		this.speed =  (this.speed - drag);
 	}
 	
 	public double getSpeed(){
-		return speed;
+		return this.speed;
 	}
 	
-	public double getSpeedFormatted(){
-		return Double.parseDouble(formatMph(speed));
+	public double getSpeedMph(){
+		return ms2mph(this.speed);
 	}
 	
-	protected void setId(int id){
-		this.id = id;
+	public double getSpeedMphFormatted(){
+		return Double.parseDouble(formatMph(ms2mph(this.speed)));
 	}
 	
-	public int getId(){
-		return id;
+	public double getAccelerationMph(){
+		return this.acceleration;
+	}
+	
+	public double getAccelerationMphFormatted(){
+		return Double.parseDouble(formatMph(ms2mph(this.acceleration)));
 	}
 	
 	//returns true of command was recognized
@@ -101,7 +107,8 @@ public class Vehicle implements CycleListener{
 		
 		//update speed
 		speed = speed + this.acceleration;
-		System.out.println("Accelerated " + ms2mph(modifier * determineAcceleration()) + " mph to a speed of " + formatMph(ms2mph(this.speed)) + " with a total acceleration of " + ms2mph(this.acceleration));
+		
+		System.out.println("Accelerated " + formatMph(ms2mph(modifier * determineAcceleration())) + " mph to a speed of " + formatMph(ms2mph(this.speed)) + " mph with a total acceleration of " + formatMph(ms2mph(this.acceleration)) + " mph");
 		
 		return acceleration;
 	}
@@ -113,7 +120,7 @@ public class Vehicle implements CycleListener{
 		
 		//update speed
 		speed = speed + this.acceleration;
-		System.out.println("Decelerated " + ms2mph(modifier * maxDeceleration) + " mph to a speed of " + formatMph(ms2mph(this.speed)) + " with a total acceleration of " + ms2mph(this.acceleration));
+		System.out.println("Decelerated " + formatMph(ms2mph(modifier * maxDeceleration)) + " mph to a speed of " + formatMph(ms2mph(this.speed)) + " mph with a total acceleration of " + formatMph(ms2mph(this.acceleration)) + " mph");
 		
 		return acceleration;
 	}
@@ -125,20 +132,18 @@ public class Vehicle implements CycleListener{
 		double constant_a = 1.70;
 		double constant_b = -0.04;
 		
-		double acc = (constant_a * Math.exp(constant_b * mph2ms(this.speed)));
-		System.out.println("acc: " + formatMph(ms2mph(acc)) + " mph+");
-		return acc;
+		return (constant_a * Math.exp(constant_b * this.speed));
 	}
 	
-	private double mph2ms(double mph){
+	public double mph2ms(double mph){
 		return (mph * 0.44704);
 	}
 	
-	private double ms2mph(double ms){
+	public double ms2mph(double ms){
 		return (ms * 2.2369362920544);
 	}
 	
-	private String formatMph(double speed){
+	public String formatMph(double speed){
 		DecimalFormat number = new DecimalFormat("#.00");
 		
 		return number.format(speed);
